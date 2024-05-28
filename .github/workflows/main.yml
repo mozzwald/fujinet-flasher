@@ -21,6 +21,8 @@ jobs:
         run: |
           pip install -r requirements_build.txt
           pip install -e .
+          pip install --force-reinstall -v pyinstaller==4.10
+          pip install --force-reinstall -v pyinstaller-hooks-contrib==2023.2
       - name: Run PyInstaller
         run: |
           python -m PyInstaller.__main__ -F -w -n FujiNet-Flasher -i icon.ico esphomeflasher\__main__.py
@@ -46,6 +48,8 @@ jobs:
         run: |
           pip install -r requirements_build.txt
           pip install -e .
+          pip install --force-reinstall -v pyinstaller==4.10
+          pip install --force-reinstall -v pyinstaller-hooks-contrib==2023.2
       - name: Run PyInstaller
         run: |
           python -m PyInstaller.__main__ -F -w -n FujiNet-Flasher -i icon.ico esphomeflasher\__main__.py
@@ -91,7 +95,7 @@ jobs:
           path: dist/FujiNet-Flasher
 
   build-macos:
-    runs-on: macOS-latest
+    runs-on: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v4
