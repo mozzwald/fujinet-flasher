@@ -24,9 +24,8 @@ from esphomeflasher.const import ESP32_DEFAULT_BOOTLOADER_FORMAT, ESP32_DEFAULT_
 from esphomeflasher.helpers import list_serial_ports
 
 
-# Force unbuffered output
-sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', buffering=1)
-sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', buffering=1)
+# Set PYTHONUNBUFFERED environment variable to ensure unbuffered output
+os.environ["PYTHONUNBUFFERED"] = "1"
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(prog='esphomeflasher {}'.format(const.__version__))
