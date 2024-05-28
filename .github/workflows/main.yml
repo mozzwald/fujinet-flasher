@@ -25,7 +25,7 @@ jobs:
           pip install --force-reinstall -v pyinstaller-hooks-contrib==2023.2
       - name: Run PyInstaller
         run: |
-          python -m PyInstaller.__main__ -F -w -n FujiNet-Flasher -i icon.ico esphomeflasher\__main__.py
+          python -m PyInstaller.__main__ -F -n FujiNet-Flasher -i icon.ico esphomeflasher\__main__.py
       - uses: actions/upload-artifact@master
         with:
           name: FujiNet-Flasher_win-x64
@@ -52,7 +52,7 @@ jobs:
           pip install --force-reinstall -v pyinstaller-hooks-contrib==2023.2
       - name: Run PyInstaller
         run: |
-          python -m PyInstaller.__main__ -F -w -n FujiNet-Flasher -i icon.ico esphomeflasher\__main__.py
+          python -m PyInstaller.__main__ -F -n FujiNet-Flasher -i icon.ico esphomeflasher\__main__.py
       - name: See dist directory
         run: ls dist
       - name: Upload Artifact
