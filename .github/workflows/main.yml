@@ -9,7 +9,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10.12'
           architecture: 'x64'
@@ -34,7 +34,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10.12'
           architecture: 'x86'
@@ -63,7 +63,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10.12'
       - name: Install dependencies
@@ -96,7 +96,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10.12'
       - name: Print Versions
