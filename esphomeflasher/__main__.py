@@ -3,6 +3,7 @@ from __future__ import print_function
 import argparse
 from datetime import datetime
 import sys
+import os
 import time
 import zipfile
 import json
@@ -21,6 +22,11 @@ from esphomeflasher.const import ESP32_DEFAULT_BOOTLOADER_FORMAT, ESP32_DEFAULT_
     ESP32_DEFAULT_PARTITIONS, ESP32_DEFAULT_FIRMWARE, ESP32_DEFAULT_SPIFFS, \
     FUJINET_VERSION_INFO, FUJINET_RELEASE_INFO
 from esphomeflasher.helpers import list_serial_ports
+
+
+# Force unbuffered output
+sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', buffering=1)
+sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', buffering=1)
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(prog='esphomeflasher {}'.format(const.__version__))
