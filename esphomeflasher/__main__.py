@@ -27,16 +27,6 @@ from esphomeflasher.helpers import list_serial_ports
 # Set PYTHONUNBUFFERED environment variable to ensure unbuffered output
 os.environ["PYTHONUNBUFFERED"] = "1"
 
-class DummyEvent:
-    def __init__(self):
-        self._set = False
-
-    def set(self):
-        self._set = True
-
-    def is_set(self):
-        return self._set
-
 def parse_args(argv):
     parser = argparse.ArgumentParser(prog='esphomeflasher {}'.format(const.__version__))
     parser.add_argument('-p', '--port',
@@ -73,18 +63,14 @@ def select_baud(args):
         print(u"Using '{}' as baud rate.".format(args.upload_baud_rate))
         return args.upload_baud_rate
 
-def show_logs(stop_event, serial_port):
+def show_logs(serial_port):
     print("Showing logs:")
     # close the port in case it's already open
     serial_port.close()
     # and reopen it
     serial_port.open()
     with serial_port:
-        while not stop_event.is_set():
-            if stop_event.is_set():
-                print("Stop event set, stopping show_logs function.")
-                serial_port.close()
-                return
+        while True:
             try:
                 raw = serial_port.readline()
             except serial.SerialException:
@@ -98,18 +84,15 @@ def show_logs(stop_event, serial_port):
                 print(message)
             except UnicodeEncodeError:
                 print(message.encode('ascii', 'backslashreplace'))
-        serial_port.close()
-        
 
 def run_esphomeflasher(argv):
     """run esphomeflasher with command line arguments"""
-    dummy_stop_event = DummyEvent()
     # parse arguments
     args = parse_args(argv)
     # run flasher
-    return run_esphomeflasher_args(dummy_stop_event, args)
+    return run_esphomeflasher_args(args)
 
-def run_esphomeflasher_kwargs(stop_event, **kwargs):
+def run_esphomeflasher_kwargs(**kwargs):
     """run esphomeflasher with key=value,... arguments"""
     # prepare args
     args_dct = {
@@ -121,9 +104,9 @@ def run_esphomeflasher_kwargs(stop_event, **kwargs):
     args_dct.update(kwargs)
     args = argparse.Namespace(**args_dct)
     # run flasher
-    return run_esphomeflasher_args(stop_event, args)
+    return run_esphomeflasher_args(args)
 
-def run_esphomeflasher_args(stop_event, args):
+def run_esphomeflasher_args(args):
     """run esphomeflasher with Namespace args object"""
     serial_port = None
     stub_chip = None
@@ -134,7 +117,7 @@ def run_esphomeflasher_args(stop_event, args):
 
         if args.show_logs:
             serial_port = serial.Serial(port, baud)
-            show_logs(stop_event, serial_port)
+            show_logs(serial_port)
             return
 
         print("Starting firmware upgrade...")
@@ -237,7 +220,7 @@ def run_esphomeflasher_args(stop_event, args):
         time.sleep(0.05)
         stub_chip._port.flushInput()
 
-        show_logs(stop_event, stub_chip._port)
+        show_logs(stub_chip._port)
     finally:
         if serial_port:
             serial_port.close()

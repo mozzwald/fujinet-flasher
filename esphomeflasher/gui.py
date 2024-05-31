@@ -173,17 +173,14 @@ class FlashingThread(threading.Thread):
         threading.Thread.__init__(self)
         self.daemon = True
         self.kwargs = kwargs
-        self._stop_event = threading.Event()
 
     def run(self):
         try:
-            run_esphomeflasher_kwargs(stop_event=self._stop_event, **self.kwargs)
+            run_esphomeflasher_kwargs(**self.kwargs)
         except Exception as e:
             print("Unexpected error: {}".format(e))
             raise
 
-    def stop(self):
-        self._stop_event.set()
 
 class MainFrame(wx.Frame):
     EVT_DOWNLOAD_PLATFORMS = wx.NewId()
@@ -204,7 +201,6 @@ class MainFrame(wx.Frame):
         self.releases_rf: Union[None, RemoteFile] = None
         self.chosen_release: Union[None, fnRelease.FujiNetRelease] = None
         self.firmware_rf: Union[None, RemoteFile] = None
-        self.worker = None
 
         self._init_ui()
 
@@ -240,11 +236,8 @@ class MainFrame(wx.Frame):
 
         def on_logs_clicked(event):
             self.console_ctrl.SetValue("")
-            if self.worker and self.worker.is_alive():
-                self.worker.stop()
-                self.worker.join()
-            self.worker = FlashingThread(port=self._port, upload_baud_rate=self._upload_baud_rate, show_logs=True)
-            self.worker.start()
+            worker = FlashingThread(port=self._port, upload_baud_rate=self._upload_baud_rate, show_logs=True)
+            worker.start()
 
         def download_platforms():
             # flush cached entries
@@ -349,11 +342,8 @@ class MainFrame(wx.Frame):
             if self._firmware is not None:
                 print("Installing Custom Firmware")
                 package = open(self._firmware, "rb")
-                if self.worker and self.worker.is_alive():
-                    self.worker.stop()
-                    self.worker.join()
-                self.worker = FlashingThread(port=self._port, upload_baud_rate=self._upload_baud_rate, package=package)
-                self.worker.start()
+                worker = FlashingThread(port=self._port, upload_baud_rate=self._upload_baud_rate, package=package)
+                worker.start()
                 self._firmware = None
             else:
                 if self.chosen_platform is None or self.chosen_release is None:
@@ -373,11 +363,8 @@ class MainFrame(wx.Frame):
                 if not ok:
                     return
                 package = io.BytesIO(self.firmware_rf.data)
-                if self.worker and self.worker.is_alive():
-                    self.worker.stop()
-                    self.worker.join()
-                self.worker = FlashingThread(port=self._port, upload_baud_rate=self._upload_baud_rate, package=package)
-                self.worker.start()
+                worker = FlashingThread(port=self._port, upload_baud_rate=self._upload_baud_rate, package=package)
+                worker.start()
 
         def on_select_port(event):
             choice = event.GetEventObject()
