@@ -87,7 +87,7 @@ jobs:
           python -m PyInstaller.__main__ -F -w -n FujiNet-Flasher -i icon.ico esphomeflasher\__main__.py
       - uses: actions/upload-artifact@master
         with:
-          name: FujiNet-Flasher_win-x64
+          name: FujiNet-Flasher_win7-x64
           path: dist/FujiNet-Flasher.exe
 
   build-ubuntu:
