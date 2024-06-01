@@ -62,7 +62,7 @@ jobs:
           name: FujiNet-Flasher_win-x86
           path: dist/FujiNet-Flasher.exe
 
-  build-windows-7:
+  build-windows-7-x64:
     runs-on: windows-2019
     steps:
       - name: Checkout
@@ -88,6 +88,34 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: FujiNet-Flasher_win7-x64
+          path: dist/FujiNet-Flasher.exe
+
+  build-windows-7-x86:
+    runs-on: windows-2019
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8.8'
+          architecture: 'x86'
+      - name: Print Versions
+        run: |
+          python --version
+          pip --version
+      - name: Install requirements
+        run: |
+          pip install -r requirements_build.txt
+          pip install -e .
+          pip install --force-reinstall -v pyinstaller==4.10
+          pip install --force-reinstall -v pyinstaller-hooks-contrib==2023.2
+      - name: Run PyInstaller
+        run: |
+          python -m PyInstaller.__main__ -F -w -n FujiNet-Flasher -i icon.ico esphomeflasher\__main__.py
+      - uses: actions/upload-artifact@master
+        with:
+          name: FujiNet-Flasher_win7-x86
           path: dist/FujiNet-Flasher.exe
 
   build-ubuntu:
